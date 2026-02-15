@@ -1,0 +1,70 @@
+<!-- ALTERNATIVE: Utiliser ce code si tu choisis EmailJS au lieu de Formspree -->
+
+<!-- À ajouter dans <head> AVANT </head> -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script type="text/javascript">
+    (function(){
+        emailjs.init("YOUR_PUBLIC_KEY"); // Remplacer par ta clé publique EmailJS
+    })();
+</script>
+
+<!-- Le formulaire reste identique, mais retire method="POST" et action -->
+<form class="contact-form" id="contact-form-emailjs">
+    <div class="form-group">
+        <label for="name">Nom complet</label>
+        <input type="text" id="name" name="from_name" required>
+    </div>
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="reply_to" required>
+    </div>
+    <div class="form-group">
+        <label for="phone">Téléphone</label>
+        <input type="tel" id="phone" name="phone" required>
+    </div>
+    <div class="form-group">
+        <label for="message">Message</label>
+        <textarea id="message" name="message" rows="5" required></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary btn-full">
+        Envoyer le message
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+    </button>
+</form>
+
+<!-- Script JavaScript pour EmailJS -->
+<script>
+document.getElementById('contact-form-emailjs').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const originalHTML = submitBtn.innerHTML;
+    
+    // Désactiver le bouton et montrer le chargement
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = 'Envoi en cours...';
+    
+    // Envoyer l'email via EmailJS
+    emailjs.sendForm('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', this)
+        .then(function() {
+            // Succès
+            showNotification('Message envoyé avec succès ! Nous vous répondrons bientôt.', 4000);
+            document.getElementById('contact-form-emailjs').reset();
+            
+            // Réactiver le bouton
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalHTML;
+        }, function(error) {
+            // Erreur
+            console.error('Erreur:', error);
+            showNotification('Erreur lors de l\'envoi. Veuillez réessayer.', 3000);
+            
+            // Réactiver le bouton
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalHTML;
+        });
+});
+</script>
